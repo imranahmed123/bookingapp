@@ -103,3 +103,5 @@ bower_components/
 
 # Exclude all files ending in .bak
 *.bak
+".idea/" 
+"~$*.docx" 
