@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_CREDENTIALS_ID = 'docker-hub-credentials'
+        DOCKER_REPO = 'bookingapp-docker-repo/payment-service'
+        KUBE_CONFIG_CREDENTIALS_ID = 'kubeconfig'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/bookingapp-repo/payment-service.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                script {
+                    docker.build(DOCKER_REPO).push('latest')
+                }
+            }
+        }
+        stage('Deploy to Kubernetes') {
+            steps {
+                withKubeConfig(credentialsId: KUBE_CONFIG_CREDENTIALS_ID) {
+                    sh 'helm upgrade --install payment-service ./helm'
+                }
+            }
+        }
+    }
+}

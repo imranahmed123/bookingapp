@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booking_platform
+    username: bookingapp_db_username
+    password: bookingapp_db_password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  security:
+    user:
+      name: user
+      password: password
+  zipkin:
+    base-url: http://localhost:9411/
+    sender:
+      type: web
+  sleuth:
+    sampler:
+      probability: 1.0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+    org.hibernate: ERROR
+  file:
+    name: /var/log/application.log
+  logstash:
+    enabled: true
+    host: logstash
+    port: 5000
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+swagger:
+  base-package: com.bookingapp.adminservice
+
+prometheus:
+  enabled: true
