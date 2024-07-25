@@ -1,0 +1,40 @@
+
+<configuration>
+    <springProfile name="dev">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+    <springProfile name="!dev">
+        <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>logstash-host:5044</destination>
+            <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="LOGSTASH" />
+        </root>
+    </springProfile>
+
+
+</configuration>
+
+<!--
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>logstash-host:5044</destination>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+
+    <logger name="org.springframework.web" level="DEBUG"/>
+</configuration>-->

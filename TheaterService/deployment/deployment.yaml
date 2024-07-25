@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: theatre-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: theatre-service
+  template:
+    metadata:
+      labels:
+        app: theatre-service
+    spec:
+      containers:
+        - name: theatre-service
+          image: bookingapp-docker-repo/theatre-service:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: prometheus-config
+              mountPath: /etc/prometheus/prometheus.yml
+              subPath: prometheus.yml
+            - name: logstash-config
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://<theatre-service-rds-endpoint>:5432/booking_platform
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+      volumes:
+        - name: prometheus-config
+          configMap:
+            name: prometheus-config
+        - name: logstash-config
+          configMap:
+            name: logstash-config
